@@ -18,12 +18,14 @@ Fonts:
 
 */
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Montserrat', 'Avenir Next', Avenir, Arial, sans-serif;
   margin: 0;
   padding: 30px;
   background-color: #EAF7FF;
@@ -244,4 +246,71 @@ button:hover {
   button {
     max-width: 100%;
   }
+}
+
+/* charity: water footer */
+.charity-footer {
+    text-align: center;
+    padding: 25px 20px;
+    margin: 25px auto;
+    max-width: 850px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.charity-footer p {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.charity-footer a {
+    color: #0077c8;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.charity-footer a:hover {
+    color: #005a9c;
+    text-decoration: underline;
+}
+
+/* Milestone achievement message */
+.achievement {
+    min-height: 52px;
+    margin: 16px 0;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.achievement:not(:empty) {
+    background-color: #fff4c2;
+}
+
+/* Win and lose message */
+#game-message {
+    min-height: 60px;
+    margin: 18px 0;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.5;
+    border-radius: 12px;
+    color: #333;
+}
+
+#game-message:not(:empty) {
+    background-color: #e8f5ff;
+    border: 2px solid #2e9df7;
 }

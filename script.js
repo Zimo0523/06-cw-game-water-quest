@@ -1,5 +1,5 @@
 // Game configuration and state variables
-const GOAL_CANS = 20;        // Total items needed to collect
+let GOAL_CANS = 20;        // Total items needed to collect
 
 const winMessages = [
     "Amazing! You reached the clean water goal!",
@@ -20,6 +20,42 @@ let lastCellIndex = -1;
 let timeLeft = 30;
 let timerInterval;
 
+let audioContext;
+
+function playSound(frequency, duration, type = 'sine') {
+    try {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.type = type;
+        oscillator.frequency.value = frequency;
+
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+            0.001,
+            audioContext.currentTime + duration
+        );
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + duration);
+    } catch (error) {
+        console.log('Audio is not available:', error);
+    }
+}
+
+function playWinSound() {
+    playSound(523, 0.2, 'sine');
+    setTimeout(() => playSound(659, 0.2, 'sine'), 220);
+    setTimeout(() => playSound(784, 0.35, 'sine'), 440);
+}
+
 // Creates the 3x3 game grid where items will appear
 function createGrid() {
   const grid = document.querySelector('.game-grid');
@@ -35,6 +71,7 @@ function createGrid() {
       // Clicking an empty cell reduces the score
       if (!cell.querySelector('.water-can')) {
           currentCans = Math.max(0, currentCans - 1);
+          playSound(220, 0.2, 'triangle');
           document.getElementById('current-cans').textContent = currentCans;
     }
 });
@@ -82,7 +119,25 @@ const randomCell = cells[randomIndex];
       if (!gameActive) return;
 
       currentCans++;
+      playSound(700, 0.12, 'sine');
       document.getElementById('current-cans').textContent = currentCans;
+      
+  const milestones = [5, 10, 15, 20, 25];
+
+  const milestoneMessages = [
+      "Great start! Keep collecting!",
+      "Awesome! You're making a difference!",
+      "Amazing progress! Keep going!",
+      "You're a water hero!",
+      "Incredible! Every drop counts!"
+  ];
+
+  const milestoneIndex = milestones.indexOf(currentCans);
+
+  if (milestoneIndex !== -1) {
+      document.getElementById('achievements').textContent =
+          milestoneMessages[milestoneIndex];
+  }
 
       randomCell.innerHTML = '';
 });
@@ -96,17 +151,36 @@ function startGame() {
 
     gameActive = true;
     currentCans = 0;
-    timeLeft = 30;
+    
+    const difficulty = document.getElementById('difficulty').value;
+
+    
+    if (difficulty === 'easy') {
+        timeLeft = 45;
+        GOAL_CANS = 15;
+    } else if (difficulty === 'normal') {
+        timeLeft = 30;
+        GOAL_CANS = 20;
+    } else if (difficulty === 'hard') {
+        timeLeft = 25;
+        GOAL_CANS = 25;
+    }
+
+
     lastCellIndex = -1;
     document.getElementById('game-message').textContent = '';
-    document.getElementById('confetti-container').innerHTML = '';
+    document.getElementById('confetti-container').innerHTML = '';    
+    document.getElementById('achievements').textContent = '';
     document.getElementById('current-cans').textContent = currentCans;
     document.getElementById('timer').textContent = timeLeft;
 
     createGrid();
     spawnWaterCan();
 
-    spawnInterval = setInterval(spawnWaterCan, 1000);
+    
+    const spawnSpeed = difficulty === 'hard' ? 800 : 1000;
+    spawnInterval = setInterval(spawnWaterCan, spawnSpeed);
+
 
     timerInterval = setInterval(function() {
         timeLeft--;
@@ -149,6 +223,7 @@ function endGame() {
 
     if (currentCans >= GOAL_CANS) {
         console.log("Victory! Starting confetti animation.");
+        playWinSound();
         celebrateWin();
         
         const randomIndex = Math.floor(Math.random() * winMessages.length);
@@ -173,3 +248,30 @@ function resetGame() {
 document.getElementById('start-game').addEventListener('click', startGame);
 
 document.getElementById('reset-game').addEventListener('click', resetGame);
+
+
+function updateInstructions() {
+    const difficulty = document.getElementById('difficulty').value;
+
+    const goals = {
+        easy: 15,
+        normal: 20,
+        hard: 25
+    };
+
+    const times = {
+        easy: 45,
+        normal: 30,
+        hard: 25
+    };
+
+    document.getElementById('game-instructions').textContent =
+        `Collect ${goals[difficulty]} items to complete the game!`;
+
+    if (!gameActive) {
+        document.getElementById('timer').textContent = times[difficulty];
+    }
+}
+
+document.getElementById('difficulty').addEventListener('change', updateInstructions);
+updateInstructions();

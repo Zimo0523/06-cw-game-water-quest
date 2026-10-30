@@ -13,7 +13,7 @@
          class="brand-logo">
 
     <h1>Water Quest</h1>
-    <p class="game-instructions">Collect 20 items to complete the game!</p>
+    <p class="game-instructions" id="game-instructions">Collect 20 items to complete the game!</p>
     <div class="stats">
       <p>Cans Collected: <span id="current-cans">0</span></p>
       <p>Time Left: <span id="timer">30</span>s</p>
@@ -22,9 +22,30 @@
     <div class="game-grid"></div>
     <p id="game-message"></p>
     <div id="confetti-container"></div>
+      
+<div class="difficulty-selector">
+  <label for="difficulty">Choose Difficulty:</label>
+  <select id="difficulty">
+    <option value="easy">Easy</option>
+    <option value="normal" selected>Normal</option>
+    <option value="hard">Hard</option>
+  </select>
+</div>
+
     <button id="start-game">Start Game</button>
     <button id="reset-game">Reset Game</button>
   </div>
   <script src="script.js"></script>
+
+<footer class="charity-footer">
+    <p>Every drop counts. Help bring clean water to people in need.</p>
+    <p>
+        Learn more at
+        <a href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">charity: water</a>
+        or
+        <a href="https://www.charitywater.org/donate" target="_blank" rel="noopener noreferrer">make a donation</a>.
+    </p>
+</footer>
+
 </body>
 </html>
